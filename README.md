@@ -30,6 +30,4 @@ With the `calypso` CLI you can interact with a CalypsoDB Bitcask directory as:
 ./calypso put x 10
 
 ./calypso get x
-
-
 ```
