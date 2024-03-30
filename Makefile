@@ -22,6 +22,11 @@ build: clean generate
 		-tags "netgo static_build" -installsuffix netgo \
 		-ldflags "-w -X $(PACKAGE)/internal.Version=$(VERSION) -X $(PACKAGE)/internal.Commit=$(COMMIT)" \
 		./seagull/calypsod/...
+	@go build \
+		-o ./bin/apid \
+		-tags "netgo static_build" -installsuffix netgo \
+		-ldflags "-w -X $(PACKAGE)/internal.Version=$(VERSION) -X $(PACKAGE)/internal.Commit=$(COMMIT)" \
+		./seagull/apid/...
 
 generate:
 	@go generate $(PACKAGE)/...
