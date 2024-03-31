@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CalypsoDB Browser/title></title>
+	<link rel="stylesheet" href="./node_modules/bulma/css/bulma.min.css">
+	<link rel="stylesheet" href="./assets/styles/style.css">
+</head>
+
+<body>
+	<div id="app">
+	 <nav class="navbar" role="navigation" aria-label="main navigation">
+		<div class="navbar-brand">
+			<a class="navbar-item" href="#">
+				<strong>CalypsoDB Browser</strong>
+			</a>
+			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+			</a>
+		</div>
+
+		<div id="navbarMenu" class="navbar-menu">
+			<div class="navbar-end">
+				<a class="navbar-item" href="#">Right Text</a>
+			</div>
+		</div>
+	</nav>
+	<section class="main-content columns is-fullheight">
+	<aside class="column is-3 is-narrow-mobile is-fullheight section is-hidden-mobile aside-border">
+		<ul class="menu-list">
+			<li><a href="#"><span class="icon"><i data-feather="database"></i></span>Create new db</a></li>
+			<li><a href="#"><span class="icon"><i data-feather="folder"></i></span>Open db</a></li>
+			<li><a href="#"><span class="icon"><i data-feather="bar-chart-2"></i></span>Statistics</a></li>
+			<li><a href="#"><span class="icon"><i data-feather="file-text"></i></span>Export db</a></li>
+			<li><a href="#"><span class="icon"><i data-feather="upload"></i></span>Import db</a></li>
+		</ul>
+	</aside>
+	<div class="container column is-10">
+	<div class="section">
+		<div class="card">
+			<div class="card-header"><p class="card-header-title">Header</p></div>
+			<div class="card-content"><div class="content">Content</div></div>
+		</div>
+	</div>
+</section>
+	<footer>
+		&copy; 2024 CalypsoDB
+	</footer>
+</div>
+	<script src="./node_modules/feather-icons/dist/feather.min.js"></script>
+	<script>
+		feather.replace();
+	</script>
+</body>
+
+</html>

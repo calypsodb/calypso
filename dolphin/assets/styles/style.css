@@ -1,0 +1,67 @@
+html, body, #app {
+	height: 100%;
+}
+
+#app {
+	min-height: 100%;
+}
+
+.footer {
+	margin-top: -12px;
+}
+
+@media screen and (max-width: 768px) {
+	#menu-toggle:checked + .nav-menu {
+		display: block;
+	}
+}
+
+.menu-label {
+	margin-bottom: 0.5rem;
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+
+.menu-list {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	list-style-type: none;
+	padding: 0;
+}
+
+.menu-list li {
+	margin-bottom: 0.5rem;
+}
+
+.menu-list li a {
+	font-size: 1.4rem;
+	display: flex;
+	align-items: center;
+	padding: 0.8rem 1rem;
+	border-radius: 10px;
+	background-color: #B7E4C7;
+	color: #000;
+	text-decoration: none;
+	transition: background-color 0.3s ease;
+}
+
+.menu-list li a:hover {
+	background-color: #265782;
+}
+
+.menu-list li a .icon {
+	margin-right: 0.5rem;
+}
+
+aside {
+	border-right: 3px solid #82C0CC;
+}
+
+.icon {
+	margin: 5px;
+	color: green;
+}
+
+.navbar {
+	border-bottom: 2px solid #FART32;
+}
