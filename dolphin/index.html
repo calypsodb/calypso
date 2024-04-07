@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>CalypsoDB Browser/title></title>
+	<title>CalypsoDB Browser</title>
 	<link rel="stylesheet" href="./node_modules/bulma/css/bulma.min.css">
 	<link rel="stylesheet" href="./assets/styles/style.css">
 </head>
@@ -31,7 +31,7 @@
 		<section class="main-content columns is-fullheight">
 			<aside class="column is-3 is-narrow-mobile is-fullheight section is-hidden-mobile aside-border">
 				<ul class="menu-list">
-					<li><a href="#"><span class="icon"><i data-feather="database"></i></span>New db</a></li>
+					<li><a href="#" hx-get="templates/new_db.html" hx-swap="innerHTML" hx-target="#canvas"><span class="icon"><i data-feather="database"></i></span>New db</a></li>
 					<li><a href="#"><span class="icon"><i data-feather="folder"></i></span>Open db</a></li>
 					<li><a href="#"><span class="icon"><i data-feather="bar-chart-2"></i></span>Statistics</a></li>
 					<li><a href="#"><span class="icon"><i data-feather="file-text"></i></span>Export db</a></li>
@@ -39,7 +39,7 @@
 				</ul>
 			</aside>
 			<div class="container column is-10">
-				<div class="section">
+				<div id="canvas" class="section">
 					<div class="card">
 						<div class="card-header">
 							<p class="card-header-title">Header</p>
@@ -54,10 +54,13 @@
 			&copy; 2024 CalypsoDB
 		</footer>
 	</div>
+	<script src="./node_modules/htmx.org/dist/htmx.min.js"></script>
 	<script src="./node_modules/feather-icons/dist/feather.min.js"></script>
 	<script>
 		feather.replace();
 	</script>
+	<script src="./node_modules/eruda/eruda.js"></script>
+	<script>eruda.init()</script>
 </body>
 
 </html>

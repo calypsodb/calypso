@@ -11,7 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "bulma": "^1.0.0",
+    "eruda": "^3.0.1",
     "feather-icons": "^4.29.1",
-    "font-awesome": "^4.7.0"
+    "font-awesome": "^4.7.0",
+    "htmx.org": "^1.9.11"
   }
 }
