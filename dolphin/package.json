@@ -1,14 +1,14 @@
 {
-  "name": "dolphin",
-  "version": "1.0.0",
-  "description": "",
+  "name": "calypso-dolphin",
+  "version": "0.2.3",
+  "description": "The GUI for CalypsoDB",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "nonomino",
+  "license": "MIT",
   "dependencies": {
     "bulma": "^1.0.0",
     "eruda": "^3.0.1",

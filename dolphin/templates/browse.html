@@ -1,0 +1,16 @@
+<table class="table is-bordered is-hoverable">
+	<thead>
+		<tr>
+			<th>Key</th>
+			<th>Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{ range .KeyValueList }}
+		<tr>
+			<td>{{ .Key }}</td>
+			<td>{{ .Value }}</td>
+		</tr>
+		{{ end }}
+	</tbody>
+</table>

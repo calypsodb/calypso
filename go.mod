@@ -5,6 +5,8 @@ go 1.21
 require (
 	github.com/abcum/lcp v0.0.0-20201209214815-7a3f3840be81
 	github.com/gofrs/flock v0.8.1
+	github.com/gorilla/handlers v1.5.2
+	github.com/gorilla/mux v1.8.1
 	github.com/pkg/errors v0.9.1
 	github.com/plar/go-adaptive-radix-tree v1.0.5
 	github.com/sirupsen/logrus v1.8.1
@@ -18,8 +20,8 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
