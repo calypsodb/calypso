@@ -5,6 +5,7 @@ go 1.21
 require (
 	git.mills.io/prologic/bitcask v1.0.2
 	github.com/abcum/lcp v0.0.0-20201209214815-7a3f3840be81
+	github.com/boltdb/bolt v1.3.1
 	github.com/gofrs/flock v0.8.1
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
