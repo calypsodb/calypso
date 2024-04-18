@@ -13,7 +13,7 @@ import (
 	"github.com/calypsodb/calypso"
 )
 
-var templates = template.Must(template.ParseGlob("../../dolphin/templates/*.html"))
+var templates = template.Must(template.ParseGlob("./../../dolphin/templates/*.html"))
 
 type server struct {
 	db *bitcask.Bitcask
@@ -55,19 +55,6 @@ func (s *server) handleGet(w http.ResponseWriter, r *http.Request) {
 	w.Write(value)
 }
 
-func (s *server) handleDelete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	key := vars["key"]
-
-	err := s.db.Delete([]byte(key))
-	if err != nil {
-		http.Error(w, "Error deleting key", http.StatusInternalServerError)
-		return
-	}
-
-	w.Write([]byte("Key deleted"))
-}
-
 func (s *server) handleBrowse(w http.ResponseWriter, r *http.Request) {
 	keysSlice := s.db.Keys()
 
@@ -103,6 +90,31 @@ func (s *server) handleBrowse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
+	key := r.URL.Query().Get("key")
+	newValue := r.FormValue("value")
+
+	err := s.db.Put([]byte(key), []byte(newValue))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte("Key updated"))
+}
+
+func (s *server) handleDelete(w http.ResponseWriter, r *http.Request) {
+	key := r.URL.Query().Get("key")
+	log.Println(key)
+	err := s.db.Delete([]byte(key))
+	if err != nil {
+		http.Error(w, "Error deleting key", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte("Key deleted"))
+}
+
 func main() {
 	usr, err := os.UserHomeDir()
 	if err != nil {
@@ -119,15 +131,20 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/api/set/{key}/{value}", srv.handleSet).Methods("POST")
 	r.HandleFunc("/api/get/{key}", srv.handleGet).Methods("GET")
-	r.HandleFunc("/api/delete/{key}", srv.handleDelete).Methods("DELETE")
 	r.HandleFunc("/api/browse", srv.handleBrowse).Methods("GET")
+	r.HandleFunc("/api/edit", srv.handleEdit).Methods("POST")
+	r.HandleFunc("/api/delete", srv.handleDelete).Methods("GET")
+
+	// Serve UI files
+	fs := http.FileServer(http.Dir("./../../dolphin"))
+	r.PathPrefix("/").Handler(http.StripPrefix("/", fs))
 
 	srvr := &http.Server{
 		Addr:		 ":7777",
 		Handler:	  handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
-			handlers.AllowedOrigins([]string{"http://localhost:8080"}),
-			handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"http://localhost:7777"}),
+			handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"}),
 		)(r),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,

@@ -1,15 +1,22 @@
-<table class="table is-bordered is-hoverable">
+<table class="table is-bordered is-hoverable is-fullwidth">
 	<thead>
 		<tr>
 			<th>Key</th>
 			<th>Value</th>
+			<th>Actions</th> <!-- Added Actions column -->
 		</tr>
 	</thead>
 	<tbody>
 		{{ range .KeyValueList }}
-		<tr>
+		<tr id="kv_row_{{ .Key }}">
 			<td>{{ .Key }}</td>
 			<td>{{ .Value }}</td>
+			<td>
+				<!-- Edit button -->
+				<button class="button is-small is-primary" hx-get="templates/edit.html?key={{ .Key }}" hx-swap="outerHTML">Edit</button>
+				<!-- Delete button -->
+				<button class="button is-small is-danger" hx-delete="true" hx-target="#kv_row_{{ .Key }}" hx-get="/api/delete?key={{ .Key }}">Delete</button>
+			</td>
 		</tr>
 		{{ end }}
 	</tbody>
