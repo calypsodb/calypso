@@ -2,9 +2,8 @@ package main
 
 import (
 	"log"
-	"os"
+	"flag"
 	"net/http"
-	"path"
 	"time"
 	"html/template"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/calypsodb/calypso"
 )
 
+var dbPathFlag string
 var templates = template.Must(template.ParseGlob("./../../dolphin/templates/*.html"))
 
 type server struct {
@@ -116,13 +116,14 @@ func (s *server) handleDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	usr, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatalf("Error getting user home directory: %v", err)
-	}
-	dbpath := path.Join(usr, "cdb_test")
+	flag.StringVar(&dbPathFlag, "dbpath", "", "Path to the database")
+	flag.Parse()
 
-	srv, err := newServer(dbpath)
+	if dbPathFlag == "" {
+		log.Fatal("Please provide a valid database path using the -dbpath flag")
+	}
+
+	srv, err := newServer(dbPathFlag)
 	if err != nil {
 		log.Fatalf("error creating server: %v", err)
 	}

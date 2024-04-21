@@ -37,4 +37,3 @@ install: build
 
 clean:
 	@rm -rf ./bin/*
-	@git clean -f -d -X
