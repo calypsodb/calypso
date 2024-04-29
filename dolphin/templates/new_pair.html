@@ -1,0 +1,33 @@
+<form id="editPairForm">
+	<div class="field">
+		<label class="label">Key:</label>
+		<div class="control">
+			<input class="input" id="keyInput" type="text" name="key" value="{{ .Key }}" required>
+		</div>
+	</div>
+	<div class="field">
+		<label class="label">Value:</label>
+		<div class="control">
+			<input class="input" id="valueInput" type="text" name="value" value="{{ .Value }}" required>
+		</div>
+	</div>
+	<div class="field">
+		<div class="control">
+			<button type="submit" class="button is-primary" id="editPair" hx-swap="none">Create Pair</button>
+		</div>
+	</div>
+</form>
+<script>
+	document.getElementById('editPairForm').addEventListener('click', function(event) {
+		event.preventDefault();
+		var key = document.getElementById('keyInput').value;
+		var value = document.getElementById('valueInput').value;
+		var apiRoute = 'http://localhost:7777/api/set/' + encodeURIComponent(key) + '/' + encodeURIComponent(value);
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', apiRoute, true);
+		xhr.send();
+		var xhr2 = new XMLHttpRequest();
+		xhr2.open('GET', 'http://localhost:7777/api/browse', true);
+		xhr2.send();
+	});
+</script>

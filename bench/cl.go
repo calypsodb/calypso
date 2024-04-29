@@ -3,19 +3,20 @@ package main
 import (
 	"fmt"
 	"github.com/calypsodb/calypso"
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg"
 	"log"
 	"time"
 )
 
 func main() {
-	// Open or create a new Bitcask database
-	db, err := bitcask.Open("./db_test")
+	db, err := bitcask.Open("./testdb")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	// Benchmark insert time
 	startInsert := time.Now()
 	for i := 0; i < 1000; i++ {
 		key := []byte(fmt.Sprintf("key%d", i))
@@ -27,7 +28,6 @@ func main() {
 	insertTime := time.Since(startInsert)
 	fmt.Printf("Insertion time for 1000 records: %s\n", insertTime)
 
-	// Benchmark read time
 	startRead := time.Now()
 	for i := 0; i < 1000; i++ {
 		key := []byte(fmt.Sprintf("key%d", i))
@@ -35,8 +35,28 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		_ = value // Ignore value for benchmarking purposes
+		_ = value
 	}
 	readTime := time.Since(startRead)
 	fmt.Printf("Read time for 1000 records: %s\n", readTime)
+
+	p := plot.New()
+	p.Title.Text = "Insert and Read Time"
+	p.Y.Label.Text = "Time (s)"
+
+	pts := make(plotter.XYs, 2)
+	pts[0].X = 0
+	pts[0].Y = insertTime.Seconds()
+	pts[1].X = 1
+	pts[1].Y = readTime.Seconds()
+
+	scatter, err := plotter.NewScatter(pts)
+	if err != nil {
+		log.Panic(err)
+	}
+	p.Add(scatter)
+
+	if err := p.Save(5*vg.Inch, 3*vg.Inch, "scatter.png"); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -38,7 +38,7 @@ func (s *server) handleSet(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	log.Println("WRITTEN SET OK")
 	w.Write([]byte("OK"))
 }
 
@@ -90,6 +90,14 @@ func (s *server) handleBrowse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *server) handleNewPair(w http.ResponseWriter, r *http.Request) {
+	err := templates.ExecuteTemplate(w, "new_pair.html", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Query().Get("key")
 	newValue := r.FormValue("value")
@@ -100,19 +108,17 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Key updated"))
+	log.Println("Key updated")
 }
 
 func (s *server) handleDelete(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Query().Get("key")
-	log.Println(key)
+	log.Println(" Key %s deleted", key)
 	err := s.db.Delete([]byte(key))
 	if err != nil {
 		http.Error(w, "Error deleting key", http.StatusInternalServerError)
 		return
 	}
-
-	w.Write([]byte("Key deleted"))
 }
 
 func main() {
@@ -133,10 +139,10 @@ func main() {
 	r.HandleFunc("/api/set/{key}/{value}", srv.handleSet).Methods("POST")
 	r.HandleFunc("/api/get/{key}", srv.handleGet).Methods("GET")
 	r.HandleFunc("/api/browse", srv.handleBrowse).Methods("GET")
+	r.HandleFunc("/api/new_pair", srv.handleNewPair).Methods("GET")
 	r.HandleFunc("/api/edit", srv.handleEdit).Methods("POST")
 	r.HandleFunc("/api/delete", srv.handleDelete).Methods("GET")
 
-	// Serve UI files
 	fs := http.FileServer(http.Dir("./../../dolphin"))
 	r.PathPrefix("/").Handler(http.StripPrefix("/", fs))
 
