@@ -5,3 +5,4 @@ tmp/
 bin/
 dolphin/node_modules
 dbs/
+**/**/testdb
