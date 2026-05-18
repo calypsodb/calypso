@@ -7,28 +7,35 @@
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)](#)
 
-**A high-performance, dead-simple Key-Value database in Go, built on an improved log-structured Bitcask engine.**
+**A key-value storage engine in Go implementing a log-structured Bitcask design with an Adaptive Radix Tree index.**
 
-[Features](#-key-improvements-over-standard-bitcask) • [Architecture](#-architectural-modules) • [Building](#-building-and-installation) • [Usage](#-usage-guide) • [Benchmarks](#-benchmarks)
+[Features](#-what-is-calypsodb) • [Architecture](#-architectural-modules) • [Building](#-building-and-installation) • [Usage](#-usage-guide) • [Benchmarks](#-benchmarks)
 
 ---
 </div>
 
 ## What is CalypsoDB?
 
-While standard Bitcask (from the famous Riak paper) is legendary for its speed and simplicity, it suffers from several limitations. **CalypsoDB** introduces major architectural enhancements to make it production-ready and highly versatile:
+While standard Bitcask (from the Riak design paper) offers fast sequential writes and single disk-seek reads, it has distinct design trade-offs, such as in-memory key directories that scale linearly with the key count. **CalypsoDB** introduces adaptations designed for practical, single-node key-value storage use:
 
-*   ** Adaptive Radix Tree (ART) Index**: Standard Bitcask uses an in-memory hash map for its key directory, which consumes massive amounts of memory and prevents ordered scans. CalypsoDB employs a memory-optimized **Adaptive Radix Tree (ART)** (`github.com/plar/go-adaptive-radix-tree`). This enables **native range queries** and **prefix scans** (`Range`, `Scan`, `SiftRange`) with minimal memory overhead.
-*   **⏱ First-Class TTL (Time-to-Live) Support**: Support for setting an expiry duration on key-value pairs (`PutWithTTL`). CalypsoDB maintains a separate, optimized, thread-safe TTL index and runs an automated garbage collection routine (`RunGC`) to reclaim expired storage.
-*   ** Redis Protocol Compatibility (`calypsod`)**: Provides a native, ultra-fast Redis-compatible network interface built on `github.com/tidwall/redcon`. You can query and manage CalypsoDB using **any standard Redis client** (`redis-cli`, Python/Node/Go redis libraries) out of the box!
-*   ** Slick Web UI Dashboard & REST Server (`apid`)**: Comes with an embedded API daemon and the **Dolphin Web Dashboard** to browse, insert, update, and delete key-value pairs through a beautiful, visual user interface.
-*   ** Zero-Downtime Double-Buffered Compaction (`Merge`)**: Features a state-of-the-art file merge and compaction process that works in the background using a double-buffered temporary database pattern. It safely reclaims disk space from deleted/stale records without blocking incoming reads or new writes.
+*   **Adaptive Radix Tree (ART) Index**: Standard Bitcask implementations typically maintain an in-memory hash map (keydir). This consumes substantial memory and prevents ordered scans. CalypsoDB employs a memory-efficient **Adaptive Radix Tree (ART)** (`github.com/plar/go-adaptive-radix-tree`). This enables ordered **prefix scans** and **range queries** (`Range`, `Scan`, `SiftRange`).
+*   **Time-to-Live (TTL) Support**: Provides support for setting an expiry duration on key-value pairs (`PutWithTTL`). CalypsoDB manages a separate thread-safe TTL index and runs background compaction to identify and clean up expired records.
+*   **Redis Protocol Compatibility (`calypsod`)**: Exposes a Redis-compatible TCP interface built on `github.com/tidwall/redcon`. You can query and manage CalypsoDB using **standard Redis clients** (`redis-cli`, or standard Go/Python/Node Redis libraries) out of the box.
+*   **Web UI Dashboard & REST Server (`apid`)**: Integrates an HTTP REST API server paired with a browser-based template dashboard to browse, insert, update, and delete key-value pairs.
+*   **Double-Buffered Compaction (`Merge`)**: Implements a background merge and compaction process using a double-buffered temporary database pattern. This design reclaims disk space from stale or deleted records without blocking active reads or incoming writes.
+
+---
+
+## Project Status
+
+CalypsoDB is currently experimental and under active development.
+APIs and storage formats may change between releases.
 
 ---
 
 ## Architectural Modules
 
-CalypsoDB is elegantly structured into modular sub-systems:
+CalypsoDB is structured into modular sub-systems:
 
 ```mermaid
 graph TD
@@ -39,16 +46,16 @@ graph TD
     Compactor -->|Reclaim Space| Disk[Compacted Datafiles on Disk]
 ```
 
-*   ** Octopus**: The internal engine core responsible for entry codecs, metadata handling, options configuration, versioning, and abstract index definitions.
-*   ** Dolphin**: The visual administration frontend. A sleek dashboard serving direct HTML templates for managing key-value stores.
-*   ** Seagull**: The gateway services housing the main binaries:
+*   **Octopus**: The internal engine core responsible for entry codecs, metadata handling, options configuration, versioning, and abstract index definitions.
+*   **Dolphin**: The visual administration frontend. A server dashboard serving direct HTML templates for managing key-value stores.
+*   **Seagull**: The gateway services housing the main binaries:
     *   `calypso` - The standalone CLI management tool.
-    *   `calypsod` - The Redis-protocol-compatible high-performance daemon.
+    *   `calypsod` - The Redis-protocol-compatible daemon.
     *   `apid` - The combined REST API and template web interface.
 
 ---
 
-##  Building and Installation
+## Building and Installation
 
 ### Prerequisites
 *   Go **1.25+** installed.
@@ -56,13 +63,13 @@ graph TD
 
 ### Build via Makefile
 
-Simply run the default target to clean, generate assets, and build all binaries:
+Run the default target to clean, generate assets, and build all binaries:
 
 ```bash
 make
 ```
 
-This will produce three high-performance statically linked binaries inside the `./bin/` directory:
+This will produce three statically linked binaries inside the `./bin/` directory:
 *   `bin/calypso` - CLI Tool
 *   `bin/calypsod` - Redis Protocol Daemon
 *   `bin/apid` - REST API & Web Dashboard Server
@@ -92,12 +99,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/calypsodb/calypso"
+	calypso "github.com/calypsodb/calypso"
 )
 
 func main() {
 	// Open or create a database
-	db, err := bitcask.Open("./my_db")
+	db, err := calypso.Open("./my_db")
 	if err != nil {
 		log.Fatalf("Failed to open database: %v", err)
 	}
@@ -145,7 +152,7 @@ Start the Redis-compatible TCP server daemon:
 ./bin/calypsod --bind :6379 --dbpath ./my_db
 ```
 
-Now, query the database using **any** standard Redis client:
+Query the database using standard Redis clients:
 
 ```bash
 # Connect using redis-cli
@@ -183,14 +190,17 @@ Start the API and Web administration dashboard server:
 
 ## Benchmarks
 
-CalypsoDB includes a comprehensive set of benchmarks comparing it with popular engines like BoltDB, standard Bitcask, and SQLite3:
+To evaluate the engine's performance relative to alternative designs (such as B-trees, SQLite, or alternative Bitcask implementations), you can execute the included benchmark suite:
 
 ```bash
-# Run all benchmark suites
+# Execute all benchmark suites
 go test -v ./test_bench/...
 ```
 
-Typical performance characteristics showcase write throughput exceeding **150,000+ sequential writes/second** and read speeds exceeding **300,000+ reads/second** under ideal conditions due to single disk-seek guarantees and optimized radix tree searches.
+### Preliminary Observations
+Because Bitcask uses an append-only log-structured design, write performance is bound primarily by sequential disk I/O (subject to chosen `fsync` configuration options), while reads guarantee a maximum of one disk seek for values not cached in memory. Radix tree operations in memory execute in $O(k)$ time, where $k$ is key length.
+
+Actual performance metrics depend heavily on underlying hardware (SSD vs. HDD), value size distributions, concurrency levels, and whether `fsync` is called synchronously on every write or deferred periodically. Run the benchmarks locally to generate metrics specific to your target environment.
 
 ---
 

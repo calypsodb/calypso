@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            archive_format: tar.gz
+          - goos: linux
+            goarch: arm64
+            archive_format: tar.gz
+          - goos: darwin
+            goarch: amd64
+            archive_format: tar.gz
+          - goos: darwin
+            goarch: arm64
+            archive_format: tar.gz
+          - goos: windows
+            goarch: amd64
+            archive_format: zip
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Get Version and Commit
+        id: vars
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          COMMIT=$(git rev-parse --short HEAD)
+          PACKAGE=$(go list -m)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "COMMIT=${COMMIT}" >> $GITHUB_ENV
+          echo "PACKAGE=${PACKAGE}" >> $GITHUB_ENV
+
+      - name: Build Binaries
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          BINARY_EXT=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_EXT=".exe"
+          fi
+          
+          # Statically build calypso
+          go build \
+            -o build/calypso${BINARY_EXT} \
+            -tags "netgo static_build" -installsuffix netgo \
+            -ldflags "-w -s -X ${{ env.PACKAGE }}/internal.Version=${{ env.VERSION }} -X ${{ env.PACKAGE }}/internal.Commit=${{ env.COMMIT }}" \
+            ./seagull/calypso/...
+
+          # Statically build calypsod
+          go build \
+            -o build/calypsod${BINARY_EXT} \
+            -tags "netgo static_build" -installsuffix netgo \
+            -ldflags "-w -s -X ${{ env.PACKAGE }}/internal.Version=${{ env.VERSION }} -X ${{ env.PACKAGE }}/internal.Commit=${{ env.COMMIT }}" \
+            ./seagull/calypsod/...
+
+          # Statically build apid
+          go build \
+            -o build/apid${BINARY_EXT} \
+            -tags "netgo static_build" -installsuffix netgo \
+            -ldflags "-w -s -X ${{ env.PACKAGE }}/internal.Version=${{ env.VERSION }} -X ${{ env.PACKAGE }}/internal.Commit=${{ env.COMMIT }}" \
+            ./seagull/apid/...
+
+      - name: Package Archives
+        run: |
+          ARCHIVE_NAME="calypso-${{ env.VERSION }}-${{ matrix.goos }}-${{ matrix.goarch }}"
+          mkdir -p dist
+          
+          # Copy auxiliary assets
+          cp LICENSE README.md build/
+          
+          if [ "${{ matrix.archive_format }}" = "tar.gz" ]; then
+            tar -czf dist/${ARCHIVE_NAME}.tar.gz -C build .
+          else
+            cd build
+            zip -r ../dist/${ARCHIVE_NAME}.zip .
+            cd ..
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: assets-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*
+          retention-days: 1
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Generate Checksums
+        run: |
+          cd dist
+          sha256sum * > checksums.txt
+          echo "Generated SHA256 Checksums:"
+          cat checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
