@@ -1,8 +1,8 @@
 .PHONY: dev build generate install image release profile bench test clean setup
 
 CGO_ENABLED=0
-VERSION := $(shell git describe --abbrev=0 --tags 2>/dev/null || echo "0.0.1")
-COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "HEAD")
+VERSION := $(shell git describe --abbrev=0 --tags)
+COMMIT := $(shell git rev-parse --short HEAD)
 PACKAGE=$(shell go list)
 
 all: dev
