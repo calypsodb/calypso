@@ -6,3 +6,5 @@ bin/
 dolphin/node_modules
 dbs/
 **/**/testdb
+**/**/testdata
+test_bench

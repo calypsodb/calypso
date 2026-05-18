@@ -113,7 +113,7 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) handleDelete(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Query().Get("key")
-	log.Println(" Key %s deleted", key)
+	log.Println(" Key deleted")
 	err := s.db.Delete([]byte(key))
 	if err != nil {
 		http.Error(w, "Error deleting key", http.StatusInternalServerError)
