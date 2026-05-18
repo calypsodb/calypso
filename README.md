@@ -1,6 +1,6 @@
 <div align="center">
 
-# CalypsoDB
+<img src="assets/logos/logo_text.svg" alt="CalypsoDB Logo" width="400" />
 
 [![Go Version](https://img.shields.io/badge/Go-1.25-00ADD8?style=flat-square&logo=go&logoColor=white)](https://golang.org)
 [![Redis Compatible](https://img.shields.io/badge/Protocol-Redis--Compatible-red?style=flat-square&logo=redis&logoColor=white)](#-redis-protocol-compatibility-calypsod)
@@ -14,7 +14,7 @@
 ---
 </div>
 
-## What is CalypsoDB
+## What is CalypsoDB?
 
 While standard Bitcask (from the famous Riak paper) is legendary for its speed and simplicity, it suffers from several limitations. **CalypsoDB** introduces major architectural enhancements to make it production-ready and highly versatile:
 
