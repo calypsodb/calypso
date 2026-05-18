@@ -1,4 +1,4 @@
-package bitcask
+package calypso
 
 import (
 	"bytes"
@@ -18,7 +18,7 @@ import (
 	"github.com/gofrs/flock"
 	art "github.com/plar/go-adaptive-radix-tree"
 
-	"github.com/calypsodb/calypso/octopus"
+	internal "github.com/calypsodb/calypso/octopus"
 	"github.com/calypsodb/calypso/octopus/config"
 	"github.com/calypsodb/calypso/octopus/data"
 	"github.com/calypsodb/calypso/octopus/data/codec"

@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
 
-	"github.com/calypsodb/calypso/octopus"
+	internal "github.com/calypsodb/calypso/octopus"
 )
 
 var (
@@ -38,7 +38,7 @@ func main() {
 	}
 
 	if version {
-		fmt.Printf("bitcaskd version %s", internal.FullVersion())
+		fmt.Printf("calypsod version %s", internal.FullVersion())
 		os.Exit(0)
 	}
 

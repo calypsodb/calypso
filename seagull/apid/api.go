@@ -1,26 +1,26 @@
 package main
 
 import (
-	"log"
 	"flag"
+	"html/template"
+	"log"
 	"net/http"
 	"time"
-	"html/template"
 
-	"github.com/gorilla/mux"
-	"github.com/gorilla/handlers"
 	"github.com/calypsodb/calypso"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 var dbPathFlag string
 var templates = template.Must(template.ParseGlob("./../../dolphin/templates/*.html"))
 
 type server struct {
-	db *bitcask.Bitcask
+	db *calypso.Bitcask
 }
 
 func newServer(dbpath string) (*server, error) {
-	db, err := bitcask.Open(dbpath)
+	db, err := calypso.Open(dbpath)
 	if err != nil {
 		log.Fatalf("error opening database: %v", err)
 	}
@@ -147,8 +147,8 @@ func main() {
 	r.PathPrefix("/").Handler(http.StripPrefix("/", fs))
 
 	srvr := &http.Server{
-		Addr:		 ":7777",
-		Handler:	  handlers.CORS(
+		Addr: ":7777",
+		Handler: handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
 			handlers.AllowedOrigins([]string{"http://localhost:7777"}),
 			handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS", "DELETE"}),

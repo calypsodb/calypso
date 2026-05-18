@@ -11,7 +11,7 @@ func TestNew(t *testing.T) {
 	dbPath := "./testdata"
 	defer os.RemoveAll(dbPath)
 
-	db, err := bitcask.Open(dbPath)
+	db, err := calypso.Open(dbPath)
 	if err != nil {
 		t.Fatalf("New: unexpected error opening database: %v", err)
 	}
@@ -26,7 +26,7 @@ func TestPutGet(t *testing.T) {
 	dbPath := "./testdata"
 	defer os.RemoveAll(dbPath)
 
-	db, err := bitcask.Open(dbPath)
+	db, err := calypso.Open(dbPath)
 	if err != nil {
 		t.Fatalf("PutGet: unexpected error opening database: %v", err)
 	}

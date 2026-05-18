@@ -2,22 +2,22 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-  "log"
 
-	"github.com/gorilla/mux"
 	"github.com/calypsodb/calypso"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
 type MockServer struct {
 	router *mux.Router
-	db     *bitcask.Bitcask
+	db     *calypso.Bitcask
 }
 
-func NewMockServer(db *bitcask.Bitcask) *MockServer {
+func NewMockServer(db *calypso.Bitcask) *MockServer {
 	return &MockServer{
 		router: mux.NewRouter(),
 		db:     db,
@@ -29,7 +29,7 @@ func (ms *MockServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func TestSetAPI(t *testing.T) {
-	db, err := bitcask.Open("testdata")
+	db, err := calypso.Open("testdata")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,10 +55,10 @@ func TestSetAPI(t *testing.T) {
 
 	if t.Failed() {
 		t.Logf("FAIL: TestSetAPI")
-    log.Println("FAIL: TestSetAPI")
+		log.Println("FAIL: TestSetAPI")
 	} else {
 		t.Logf("PASS: TestSetAPI")
-    log.Println("PASS: TestSetAPI")
+		log.Println("PASS: TestSetAPI")
 	}
 }
 
@@ -77,7 +77,7 @@ func (ms *MockServer) handleSetAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func TestGetAPI(t *testing.T) {
-	db, err := bitcask.Open("testdata")
+	db, err := calypso.Open("testdata")
 	if err != nil {
 		t.Fatal(err)
 	}

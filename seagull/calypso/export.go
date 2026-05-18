@@ -47,15 +47,15 @@ func init() {
 	RootCmd.AddCommand(exportCmd)
 
 	exportCmd.PersistentFlags().IntP(
-		"with-max-datafile-size", "", bitcask.DefaultMaxDatafileSize,
+		"with-max-datafile-size", "", calypso.DefaultMaxDatafileSize,
 		"Maximum size of each datafile",
 	)
 	exportCmd.PersistentFlags().Uint32P(
-		"with-max-key-size", "", bitcask.DefaultMaxKeySize,
+		"with-max-key-size", "", calypso.DefaultMaxKeySize,
 		"Maximum size of each key",
 	)
 	exportCmd.PersistentFlags().Uint64P(
-		"with-max-value-size", "", bitcask.DefaultMaxValueSize,
+		"with-max-value-size", "", calypso.DefaultMaxValueSize,
 		"Maximum size of each value",
 	)
 }
@@ -66,7 +66,7 @@ type kvPair struct {
 }
 
 func export(path, output string) int {
-	db, err := bitcask.Open(path)
+	db, err := calypso.Open(path)
 	if err != nil {
 		log.WithError(err).Error("error opening database")
 		return 1
@@ -94,7 +94,7 @@ func export(path, output string) int {
 	return 0
 }
 
-func exportKey(db *bitcask.Bitcask, w io.Writer) func(key []byte) error {
+func exportKey(db *calypso.Bitcask, w io.Writer) func(key []byte) error {
 	return func(key []byte) error {
 		value, err := db.Get(key)
 		if err != nil {

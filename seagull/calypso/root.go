@@ -8,12 +8,12 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/calypsodb/calypso/octopus"
+	internal "github.com/calypsodb/calypso/octopus"
 )
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:     "bitcask",
+	Use:     "calypso",
 	Version: internal.FullVersion(),
 	Short:   "Command-line tools for bitcask",
 	Long: `This is the command-line tool to interact with a bitcask database.

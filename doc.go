@@ -1,3 +1,3 @@
-// Package bitcask implements a high-performance key-value store based on a
+// Package calypso implements a high-performance key-value store based on a
 // WAL and LSM.
-package bitcask
+package calypso

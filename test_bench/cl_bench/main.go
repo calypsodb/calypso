@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/calypsodb/calypso"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
-	"log"
-	"time"
 )
 
 func main() {
-	db, err := bitcask.Open("./testdb")
+	db, err := calypso.Open("./testdb")
 	if err != nil {
 		log.Fatal(err)
 	}

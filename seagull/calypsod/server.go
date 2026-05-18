@@ -17,11 +17,11 @@ import (
 
 type server struct {
 	bind string
-	db   *bitcask.Bitcask
+	db   *calypso.Bitcask
 }
 
 func newServer(bind, dbpath string) (*server, error) {
-	db, err := bitcask.Open(dbpath)
+	db, err := calypso.Open(dbpath)
 	if err != nil {
 		log.WithError(err).WithField("dbpath", dbpath).Error("error opening database")
 		return nil, err

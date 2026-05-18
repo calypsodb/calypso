@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/calypsodb/calypso"
-	"github.com/calypsodb/calypso/octopus"
+	internal "github.com/calypsodb/calypso/octopus"
 	"github.com/calypsodb/calypso/octopus/config"
 	"github.com/calypsodb/calypso/octopus/data/codec"
 	"github.com/calypsodb/calypso/octopus/index"
@@ -40,8 +40,8 @@ func init() {
 }
 
 func recover(path string, dryRun bool) int {
-	maxKeySize := bitcask.DefaultMaxKeySize
-	maxValueSize := bitcask.DefaultMaxValueSize
+	maxKeySize := calypso.DefaultMaxKeySize
+	maxValueSize := calypso.DefaultMaxValueSize
 	if cfg, err := config.Load(filepath.Join(path, "config.json")); err == nil {
 		maxKeySize = cfg.MaxKeySize
 		maxValueSize = cfg.MaxValueSize

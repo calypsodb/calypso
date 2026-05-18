@@ -42,7 +42,7 @@ func init() {
 }
 
 func put(path, key string, value io.Reader) int {
-	db, err := bitcask.Open(path)
+	db, err := calypso.Open(path)
 	if err != nil {
 		log.WithError(err).Error("error opening database")
 		return 1

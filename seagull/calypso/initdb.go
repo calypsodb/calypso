@@ -18,13 +18,13 @@ var initdbCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	PreRun: func(cmd *cobra.Command, args []string) {
 		viper.BindPFlag("with-max-datafile-size", cmd.Flags().Lookup("with-max-datafile-size"))
-		viper.SetDefault("with-max-datafile-size", bitcask.DefaultMaxDatafileSize)
+		viper.SetDefault("with-max-datafile-size", calypso.DefaultMaxDatafileSize)
 
 		viper.BindPFlag("with-max-key-size", cmd.Flags().Lookup("with-max-key-size"))
-		viper.SetDefault("with-max-key-size", bitcask.DefaultMaxKeySize)
+		viper.SetDefault("with-max-key-size", calypso.DefaultMaxKeySize)
 
 		viper.BindPFlag("with-max-value-size", cmd.Flags().Lookup("with-max-value-size"))
-		viper.SetDefault("with-max-value-size", bitcask.DefaultMaxValueSize)
+		viper.SetDefault("with-max-value-size", calypso.DefaultMaxValueSize)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		path := viper.GetString("path")
@@ -33,11 +33,11 @@ var initdbCmd = &cobra.Command{
 		maxKeySize := viper.GetUint32("with-max-key-size")
 		maxValueSize := viper.GetUint64("with-max-value-size")
 
-		db, err := bitcask.Open(
+		db, err := calypso.Open(
 			path,
-			bitcask.WithMaxDatafileSize(maxDatafileSize),
-			bitcask.WithMaxKeySize(maxKeySize),
-			bitcask.WithMaxValueSize(maxValueSize),
+			calypso.WithMaxDatafileSize(maxDatafileSize),
+			calypso.WithMaxKeySize(maxKeySize),
+			calypso.WithMaxValueSize(maxValueSize),
 		)
 		if err != nil {
 			log.WithError(err).Error("error opening database")
@@ -53,15 +53,15 @@ func init() {
 	RootCmd.AddCommand(initdbCmd)
 
 	initdbCmd.PersistentFlags().IntP(
-		"with-max-datafile-size", "", bitcask.DefaultMaxDatafileSize,
+		"with-max-datafile-size", "", calypso.DefaultMaxDatafileSize,
 		"Maximum size of each datafile",
 	)
 	initdbCmd.PersistentFlags().Uint32P(
-		"with-max-key-size", "", bitcask.DefaultMaxKeySize,
+		"with-max-key-size", "", calypso.DefaultMaxKeySize,
 		"Maximum size of each key",
 	)
 	initdbCmd.PersistentFlags().Uint64P(
-		"with-max-value-size", "", bitcask.DefaultMaxValueSize,
+		"with-max-value-size", "", calypso.DefaultMaxValueSize,
 		"Maximum size of each value",
 	)
 }

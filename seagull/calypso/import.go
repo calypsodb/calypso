@@ -47,7 +47,7 @@ func _import(path, input string) int {
 		r   io.ReadCloser
 	)
 
-	db, err := bitcask.Open(path)
+	db, err := calypso.Open(path)
 	if err != nil {
 		log.WithError(err).Error("error opening database")
 		return 1

@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	db, err := bitcask.Open("million_db")
+	db, err := calypso.Open("million_db")
 	if err != nil {
 		log.Fatal(err)
 	}
